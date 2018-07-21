@@ -1,0 +1,1 @@
+export default (props) => <h4>{props.children}</h4>

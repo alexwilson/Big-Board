@@ -1,0 +1,8 @@
+{
+  "name": "big-board",
+  "alias": "big-board.now.sh",
+  "engines": {
+    "node": "7.4.0"
+  }
+}
+
