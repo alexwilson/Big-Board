@@ -27,11 +27,16 @@ module.exports = function jiraProvider(req, res, next) {
     const fetch = makeJiraBoardClient(req.params.boardId, req.query.apiKey)
 
     // Grab all of the data JIRA gives us about the board...
-    return Promise.all([
+    return fetch('/configuration').then(res => res.json())
+    .then(configuration => Promise.all([
         fetch('/').then(res => res.json()).then(data => ({ type: 'board', data })),
-        fetch('/configuration').then(res => res.json()).then(data => ({ type: 'configuration', data })),
-        fetch('/issue?fields=summary,status,priority&maxResults=500').then(res => res.json()).then(data => ({ type: 'issues', data }))
-    ])
+        new Promise(resolve => resolve({ type: 'configuration', data: configuration })),
+        fetch('/issue?'+[
+            'fields=summary,status,priority',
+            'maxResults=500',
+            `jql=${encodeURI(configuration.subQuery.query)}`
+        ].join('&')).then(res => res.json()).then(data => ({ type: 'issues', data }))
+    ]))
         // Make this data a little easier to work with.
         .then(results => {
             const board = results.filter(result => result.type === 'board').shift().data
