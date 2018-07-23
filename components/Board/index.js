@@ -1,37 +1,28 @@
 import React, { Component } from 'react'
-import BoardHeading from '../BoardHeading'
-import Column from '../Column'
+import Lane from '../Lane'
 
 export default class Board extends Component {
   render () {
-    console.log(this.props)
     if (!this.props.board) return (null)
     return (
     <div className="board">
-
         <h1 className="board__heading">{this.props.board.title}</h1>
-
-        <div className="board__column--container">{
+        <div className="board__lane--container">{
             this.props.board.columns.map(column => 
-                <div className="board__column"><Column column={column}/></div>
+                <div className="board__lane"><Lane column={column}/></div>
             )
         }</div>
 
         <style jsx>{`
-            .board {
-                height: 100vh;
-            }
             .board__heading {
                 display: block;
                 text-align: center;
+                color: white;
             }
-            .board__column--container {
+            .board__lane--container {
                 width: 100%;
-                display: flex;
-                flex-direction: "column";
-            }
-            .board__column {
-                flex: 1 0 0;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(1em, 1fr));
             }
         `}</style>
 

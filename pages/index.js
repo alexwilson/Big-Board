@@ -1,2 +1,4 @@
-export default () => <div></div>
+// @flow
+import React from 'react'
 
+export default () => <div></div>

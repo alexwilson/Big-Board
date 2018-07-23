@@ -11,6 +11,12 @@ export default props => (<div className="card">
       padding: 0.25em;
       margin: 0.25em;
       border: 1px solid black;
+
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+      border: 1px solid rgba(0, 0, 0, 0.125);
+      border-radius: .25rem;
     }
     .card__image {
         height: 14px;

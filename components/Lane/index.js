@@ -13,9 +13,9 @@ export default class extends Component {
                 flex-direction: column;
             }
             .column__heading {
+                color: #eee;
                 display: block;
                 text-align: center;
-                height: 2em;
             }
         `}</style>
     </div>

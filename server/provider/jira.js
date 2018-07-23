@@ -22,6 +22,30 @@ function makeJiraBoardClient(reference, apiKey) {
     return (url, options) => fetch(`${baseUrl}${url}`, Object.assign(defaultOptions, options))
 }
 
+function boardFromJiraResults(results) {
+  const columns = results.configuration.columnConfig.columns
+    .filter(col => col.statuses.length > 0)
+    .map(col => {
+      const column = new Column
+      column.title = col.name
+      column.cards = results.issues.issues
+        .filter(issue => col.statuses[0].id == issue.fields.status.id)
+        .map(issue => {
+          const card = new Card
+          card.id = issue.key
+          card.title = issue.fields.summary
+          card.priority = issue.fields.priority
+          return card
+        })
+      return column
+    })
+
+  const board = new Board
+  board.title = results.board.name
+  board.columns = columns
+  return board
+}
+
 module.exports = function jiraProvider(req, res, next) {
 
     const fetch = makeJiraBoardClient(req.params.boardId, req.query.apiKey)
@@ -47,29 +71,7 @@ module.exports = function jiraProvider(req, res, next) {
         })
 
         // Join up this data into a Board!
-        .then(results => {
-            const columns = results.configuration.columnConfig.columns
-              .filter(col => col.statuses.length > 0)
-              .map(col => {
-                const column = new Column
-                column.title = col.name
-                column.cards = results.issues.issues
-                  .filter(issue => col.statuses[0].id == issue.fields.status.id)
-                  .map(issue => {
-                    const card = new Card
-                    card.id = issue.key
-                    card.title = issue.fields.summary
-                    card.priority = issue.fields.priority
-                    return card
-                  })
-                return column
-              })
-
-            const board = new Board
-            board.title = results.board.name
-            board.columns = columns
-            return board
-        })
+        .then(boardFromJiraResults)
         .then(board => res.json(board))
         .catch(_ => res.status(500))
 }
