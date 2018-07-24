@@ -1,5 +1,9 @@
-const fetch =  require('node-fetch')
 const base64 = require('base-64')
+const tmp = require('tmp')
+const fetch = require('make-fetch-happen').defaults({
+    cacheManager: tmp.dirSync().name,
+    cache: 'default'
+})
 
 const Column = require('../entity/column')
 const Card = require('../entity/card')
@@ -78,6 +82,9 @@ module.exports = function jiraProvider(req, res, next) {
 
         // Join up this data into a Board!
         .then(boardFromJiraResults)
-        .then(board => res.json(board))
+        .then(board => {
+            res.header('Cache-Control', 'max-age=300')
+            res.json(board)
+        })
         .catch(_ => res.status(500))
 }
