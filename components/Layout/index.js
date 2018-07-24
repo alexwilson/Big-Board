@@ -24,6 +24,9 @@ export default function Layout({children}) {
                 font-weight: 400;
                 line-height: 1em;
             }
+            ::-webkit-scrollbar { 
+                display: none; 
+            }            
         `}</style>
         {children}
     </div>)
